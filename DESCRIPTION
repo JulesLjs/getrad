@@ -1,0 +1,18 @@
+Package: getrad
+Type: Package
+Title: Génération d'Export de Tableurs avec des Règles Automatisées et Dynamiques
+Version: 0.1.0
+Authors@R: c(
+    person(
+      "Jules", "LEJAS",
+      email = "jules.lejas@gmail.com",
+      role = c("aut", "cre")
+    )
+  )
+Description: Fonctions utilitaires pour écrire dans des feuilles Excel.
+License: MIT
+Encoding: UTF-8
+LazyData: true
+Imports:
+    xlsx
+RoxygenNote: 7.3.3
