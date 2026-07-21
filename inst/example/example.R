@@ -1,13 +1,10 @@
 
-# Chargement du package
-
+# Chargement du package et des données
 devtools::load_all()
 date_revu <- as.Date("2026-06-01")
 
-# Données tableau écrites en dur
-
 data_fig_2 <- data.frame(
-  "Janvier 26 / Décembre 25 (en %)" = c(0.0, 0.4, -7.3, 0.9),
+  "Janvier 26 / Décembre 25 (en %)" = c(0.0, 0.4, -7.3, 0.9), # Nom de colonnes mobiles écrit dans R
   "Février 26 / Janvier 26 (en %)" = c(0.5, -1.9, 0.0, 1.5),
   "Mars 26 / Février 26 (en %)" = c(2.2, -1.4, -2.9, 4.3),
   "Avril 26 / Mars 26 (en %)" = c(-6.3, -3.3, -4.5, -7.6),
@@ -87,17 +84,21 @@ data_fig_8 <- data.frame(
   check.names = FALSE
 )
 
-# Charger le fichier initial (excel)
+#               Etape 1 : Chargement du fichier initial (excel)              ---
+
 wb_figure_fr <- xlsx::loadWorkbook("inst/example/tableaux_creations_entreprises_fr.xlsx")
 
-# Obtenir les feuilles
+#                     Etape 2 : Extraction des feuilles                      ---
+
 sheets <- xlsx::getSheets(wb_figure_fr)
 
-# Écrire les dataframes dans les feuilles correspondantes
+#     Etape 3 : Ecriture des dataframes dans les feuilles correspondantes    ---
+
 write_data_to_sheet(sheets[[1]], data_fig_2, start_row = 3, start_col = 2)
 write_data_to_sheet(sheets[[2]], data_fig_3, start_row = 4, start_col = 2)
 write_data_to_sheet(sheets[[3]], data_fig_4, start_row = 3, start_col = 2)
 
+# Personnalisation d'une cellule spécifique
 set_cell_value(sheets[[2]], 2, 3,
                if (lubridate::month(date_revu) == 1) {
                  "Cumul sur le 1er mois de l'année"
@@ -111,9 +112,11 @@ set_cell_value(sheets[[2]], 2, 3,
 write_data_to_sheet(sheets[[4]], data_fig_7, start_row = 3, start_col = 3)
 write_data_to_sheet(sheets[[5]], data_fig_8, start_row = 4, start_col = 3)
 
-# Sauvegarder le fichier
+#                    Etape 4 : Sauvegarde du fichier                         ---
+
 xlsx::saveWorkbook(wb_figure_fr, "inst/example/data_xlsx.xlsx")
 
-# Convertir en ODS
+#                      Etape 5 : Duplication en ODS                          ---
+
 convert_xlsx_to_ods("inst/example", "data_xlsx",
                     "inst/example", "data_ods")
