@@ -1,0 +1,364 @@
+---
+title: "Exporter des tableaux au format XLSX et ODS avec getrad"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Exporter des tableaux au format XLSX et ODS avec getrad}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = TRUE
+)
+```
+
+## Objectif
+
+Cette vignette présente un exemple complet d'export de tableaux au format XLSX et ODS avec le package `getrad`.
+
+L'exemple repose sur un fichier modèle au format `.xlsx`, fourni avec le package. Les données sont ensuite écrites dans différentes feuilles du classeur, avant de sauvegarder une version `.xlsx` puis de convertir ce fichier en `.ods`.
+
+Le modèle initial reste toujours un fichier `.xlsx`. Le fichier `.ods` est produit ensuite par conversion du fichier `.xlsx` généré.
+
+## Chargement des packages
+
+On commence par charger le package `getrad`.
+
+```{r}
+library(getrad)
+```
+
+On charge également les packages utilisés dans l'exemple.
+
+```{r}
+library(xlsx)
+library(lubridate)
+```
+
+## Définition des paramètres
+
+On définit une date de référence. Elle sera utilisée pour produire un libellé dynamique dans une cellule du fichier Excel.
+
+```{r}
+date_revu <- as.Date("2026-06-01")
+```
+
+On définit ensuite un dossier de sortie temporaire. Cela permet à la vignette de générer des fichiers sans écrire directement dans le dossier du package.
+
+```{r}
+dossier_sortie <- tempdir()
+```
+
+Dans un usage réel, ce dossier temporaire pourrait être remplacé par le dossier de sortie de l'IR.
+
+```{r, eval = FALSE}
+dossier_sortie <- file.path(dossier_ir_actuel, "data")
+```
+
+## Création des données d'exemple
+
+Les tableaux utilisés dans cette vignette sont créés directement dans R. Cela rend l'exemple autonome et reproductible.
+
+### Figure 2
+
+Le premier tableau contient des évolutions mensuelles et un niveau observé en avril 2026.
+
+```{r}
+data_fig_2 <- data.frame(
+  "Janvier 26 / Décembre 25 (en %)" = c(0.0, 0.4, -7.3, 0.9),
+  "Février 26 / Janvier 26 (en %)" = c(0.5, -1.9, 0.0, 1.5),
+  "Mars 26 / Février 26 (en %)" = c(2.2, -1.4, -2.9, 4.3),
+  "Avril 26 / Mars 26 (en %)" = c(-6.3, -3.3, -4.5, -7.6),
+  "Avril 26" = c(99569, 25033, 8372, 66164),
+  row.names = c(
+    "Ensemble",
+    "Sociétés",
+    "Entreprises individuelles classiques",
+    "Micro-entrepreneurs"
+  ),
+  check.names = FALSE
+)
+
+data_fig_2
+```
+
+### Figure 3
+
+Le deuxième tableau présente des évolutions cumulées sur 3 mois, sur 12 mois, ainsi que les niveaux observés en 2025 et 2026.
+
+```{r}
+data_fig_3 <- data.frame(
+  "sur 3 mois" = c(11.8, 4.7, 3.2, 15.9),
+  "sur 12 mois" = c(9.3, 7.3, 3.0, 10.9),
+  "2025" = c(393883, 104636, 34808, 254439),
+  "2026" = c(438292, 111880, 35697, 290715),
+  row.names = c(
+    "Ensemble",
+    "Sociétés",
+    "Entreprises individuelles classiques",
+    "Micro-entrepreneurs"
+  ),
+  check.names = FALSE
+)
+
+data_fig_3
+```
+
+### Figure 4
+
+Le troisième tableau présente la répartition des créations selon plusieurs périodes de cumul.
+
+```{r}
+data_fig_4 <- data.frame(
+  "Cumul sur 1 mois (Avril 2026)" = c(100.0, 25.6, 7.8, 66.6),
+  "Cumul sur 3 mois (Février 2026 à Avril 2026)" = c(100.0, 25.4, 7.9, 66.7),
+  "Cumul sur 12 mois (Mai 2025 à Avril 2026)" = c(100.0, 25.5, 8.8, 65.7),
+  "Cumul sur 12 mois, un an auparavant (Mai 2024 à Avril 2025)" = c(100.0, 26.0, 9.4, 64.7),
+  row.names = c(
+    "Ensemble",
+    "Sociétés",
+    "Entreprises individuelles classiques",
+    "Micro-entrepreneurs"
+  ),
+  check.names = FALSE
+)
+
+data_fig_4
+```
+
+### Figure 7
+
+Le quatrième tableau contient des niveaux mensuels par secteur.
+
+```{r}
+data_fig_7 <- data.frame(
+  "Février 26" = c(
+    103953, 6117, 4311, 7305, 28897, 15358, 9396,
+    4143, 7614, 2408, 3435, 27678, 9301, 11198
+  ),
+  "Mars 26" = c(
+    106274, 6120, 4351, 7451, 29139, 15670, 9169,
+    4300, 8020, 2500, 3386, 28691, 9477, 11490
+  ),
+  "Avril 26" = c(
+    99569, 5651, 4031, 7481, 27180, 14921, 8110,
+    4149, 7784, 2346, 3185, 26750, 8730, 10462
+  ),
+  row.names = c(
+    "CREAT", "BE", "C", "FZ", "GI", "G", "H", "I",
+    "JZ", "KZ", "LZ", "MN", "OQ", "RU"
+  ),
+  check.names = FALSE
+)
+
+data_fig_7
+```
+
+### Figure 8
+
+Le dernier tableau contient les évolutions par secteur.
+
+```{r}
+data_fig_8 <- data.frame(
+  "Avril 26 / Mars 26" = c(
+    -6.3, -7.7, -7.4, 0.4, -6.7, -4.8, -11.5,
+    -3.5, -2.9, -6.2, -5.9, -6.8, -7.9, -8.9
+  ),
+  "sur 3 mois" = c(
+    11.8, 6.8, 16.0, 8.0, 6.8, 12.7, -2.5,
+    7.6, 37.9, -3.4, 5.7, 17.7, 8.9, 9.9
+  ),
+  "sur 12 mois" = c(
+    9.3, 6.3, 14.5, 3.1, 7.9, 14.4, -0.8,
+    7.4, 22.1, -9.8, 9.2, 15.0, 6.2, 6.2
+  ),
+  row.names = c(
+    "CREAT", "BE", "C", "FZ", "GI", "G", "H", "I",
+    "JZ", "KZ", "LZ", "MN", "OQ", "RU"
+  ),
+  check.names = FALSE
+)
+
+data_fig_8
+```
+
+## Chargement du fichier modèle
+
+Le fichier modèle est un fichier Excel fourni avec le package. Dans le dépôt, il est placé dans le dossier suivant :
+
+```text
+inst/example/tableaux_creations_entreprises_fr.xlsx
+```
+
+Une fois le package installé, on y accède avec `system.file()`.
+
+```{r}
+modele_xlsx <- system.file(
+  "example",
+  "tableaux_creations_entreprises_fr.xlsx",
+  package = "getrad"
+)
+
+modele_xlsx
+```
+
+On vérifie que le fichier est bien trouvé.
+
+```{r}
+file.exists(modele_xlsx)
+```
+
+On charge ensuite le classeur Excel.
+
+```{r}
+wb_figure_fr <- xlsx::loadWorkbook(modele_xlsx)
+```
+
+## Extraction des feuilles
+
+On récupère les différentes feuilles du classeur. Chaque feuille sera ensuite alimentée avec un tableau différent.
+
+```{r}
+sheets <- xlsx::getSheets(wb_figure_fr)
+
+names(sheets)
+```
+
+## Écriture des données dans le classeur
+
+La fonction `write_data_to_sheet()` permet d'écrire un data frame dans une feuille Excel, à partir d'une ligne et d'une colonne données.
+
+On commence par écrire les trois premiers tableaux.
+
+```{r}
+write_data_to_sheet(
+  sheet = sheets[[1]],
+  data = data_fig_2,
+  start_row = 3,
+  start_col = 2
+)
+
+write_data_to_sheet(
+  sheet = sheets[[2]],
+  data = data_fig_3,
+  start_row = 4,
+  start_col = 2
+)
+
+write_data_to_sheet(
+  sheet = sheets[[3]],
+  data = data_fig_4,
+  start_row = 3,
+  start_col = 2
+)
+```
+
+## Personnalisation d'une cellule
+
+Certaines cellules peuvent être personnalisées indépendamment de l'écriture des tableaux.
+
+Dans cet exemple, on crée un libellé qui dépend du mois de la date de référence.
+
+```{r}
+libelle_cumul <- if (lubridate::month(date_revu) == 1) {
+  "Cumul sur le 1er mois de l'année"
+} else if (lubridate::month(date_revu) == 12) {
+  "Cumul sur les 12 mois de l'année"
+} else {
+  paste(
+    "Cumul sur les",
+    lubridate::month(date_revu),
+    "premiers mois de l'année"
+  )
+}
+
+libelle_cumul
+```
+
+On écrit ensuite ce libellé dans la cellule souhaitée.
+
+```{r}
+set_cell_value(
+  sheet = sheets[[2]],
+  row = 2,
+  col = 3,
+  value = libelle_cumul
+)
+```
+
+## Écriture des dernières feuilles
+
+On écrit ensuite les deux derniers tableaux dans les feuilles correspondantes.
+
+```{r}
+write_data_to_sheet(
+  sheet = sheets[[4]],
+  data = data_fig_7,
+  start_row = 3,
+  start_col = 3
+)
+
+write_data_to_sheet(
+  sheet = sheets[[5]],
+  data = data_fig_8,
+  start_row = 4,
+  start_col = 3
+)
+```
+
+## Sauvegarde au format XLSX
+
+Une fois le classeur modifié, on l'enregistre au format `.xlsx`.
+
+```{r}
+fichier_xlsx_sortie <- file.path(dossier_sortie, "data_xlsx.xlsx")
+
+xlsx::saveWorkbook(
+  wb_figure_fr,
+  fichier_xlsx_sortie
+)
+
+file.exists(fichier_xlsx_sortie)
+```
+
+## Conversion au format ODS
+
+Le fichier `.ods` est produit à partir du fichier `.xlsx` généré précédemment.
+
+```{r}
+convert_xlsx_to_ods(
+  dossier_entree = dossier_sortie,
+  nom_fichier_entree = "data_xlsx",
+  dossier_sortie = dossier_sortie,
+  nom_fichier_sortie = "data_ods"
+)
+```
+
+On vérifie que le fichier ODS a bien été créé.
+
+```{r}
+fichier_ods_sortie <- file.path(dossier_sortie, "data_ods.ods")
+
+file.exists(fichier_ods_sortie)
+```
+
+## Vérification des fichiers générés
+
+On peut enfin lister les fichiers créés dans le dossier de sortie.
+
+```{r}
+list.files(
+  dossier_sortie,
+  pattern = "data_",
+  full.names = TRUE
+)
+```
+
+## Résumé
+
+Cette vignette montre comment partir d'un modèle Excel fourni avec le package `getrad`, écrire plusieurs tableaux dans ses feuilles, modifier une cellule spécifique, puis générer des sorties aux formats XLSX et ODS.
+
+Le modèle initial reste toujours un fichier `.xlsx`. Le fichier `.ods` est ensuite produit par conversion du fichier `.xlsx` généré.

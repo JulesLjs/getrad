@@ -1,0 +1,77 @@
+## Installation
+
+Le package `getrad` est disponible depuis GitHub.
+
+Avant de l’installer, il faut installer le package `remotes` si ce n’est pas déjà fait :
+
+```r
+install.packages("remotes")
+```
+
+Le package peut ensuite être installé avec :
+
+```r
+remotes::install_github("jules-lejas/getrad")
+```
+
+Puis chargé avec :
+
+```r
+library(getrad)
+```
+
+## Installation avec la vignette
+
+Pour installer également la vignette du package :
+
+```r
+remotes::install_github(
+  "jules-lejas/getrad",
+  build_vignettes = TRUE
+)
+```
+
+La vignette peut ensuite être ouverte avec :
+
+```r
+browseVignettes("getrad")
+```
+
+ou directement avec :
+
+```r
+vignette("getrad", package = "getrad")
+```
+
+## Exemple minimal
+
+```r
+library(getrad)
+
+convert_xlsx_to_ods(
+  path_input = "C:/mes_fichiers",
+  file_input = "tableau.xlsx"
+)
+```
+
+## Prérequis
+
+La fonction `convert_xlsx_to_ods()` utilise LibreOffice pour convertir les fichiers `.xlsx` en `.ods`.
+
+LibreOffice doit donc être installé sur l’ordinateur.
+
+Par défaut, la fonction cherche LibreOffice ici :
+
+```r
+"C:/Program Files/LibreOffice/program/"
+```
+
+Si LibreOffice est installé ailleurs, il faut préciser le chemin :
+
+```r
+convert_xlsx_to_ods(
+  path_input = "C:/mes_fichiers",
+  file_input = "tableau.xlsx",
+  path_to_soffice = "C:/chemin/vers/LibreOffice/program/"
+)
+```

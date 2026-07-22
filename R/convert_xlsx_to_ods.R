@@ -31,6 +31,9 @@
 #'
 #' @return Invisiblement, le chemin complet du fichier `.ods` généré.
 #'
+#' @references
+#' \url{https://help.libreoffice.org/latest/en-US/text/shared/guide/start_parameters.html}
+#'
 #' @examples
 #' \dontrun{
 #' convert_xlsx_to_ods(
