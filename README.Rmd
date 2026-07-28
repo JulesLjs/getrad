@@ -11,7 +11,7 @@ install.packages("remotes")
 Le package peut ensuite être installé avec :
 
 ```r
-remotes::install_github("jules-lejas/getrad")
+remotes::install_github("JulesLjs/getrad")
 ```
 
 Puis chargé avec :
@@ -26,7 +26,7 @@ Pour installer également la vignette du package :
 
 ```r
 remotes::install_github(
-  "jules-lejas/getrad",
+  "JulesLjs/getrad",
   build_vignettes = TRUE
 )
 ```
