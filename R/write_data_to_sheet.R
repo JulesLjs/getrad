@@ -3,38 +3,54 @@
 #' Fonction utilitaire pour écrire une dataframe dans une feuille Excel
 #' via l'API Java Apache POI (via le package xlsx).
 #'
-#' @param sheet feuille Excel (objet sheet Apache POI)
-#' @param data dataframe à écrire
-#' @param start_row ligne de départ
-#' @param start_col colonne de départ
+#' @param sheet Feuille Excel (objet sheet Apache POI).
+#' @param data Dataframe à écrire.
+#' @param start_row Ligne de départ.
+#' @param start_col Colonne de départ.
+#' @param colnames Booléen indiquant si les noms de colonnes doivent être écrits.
 #'
 #' @return Rien. La fonction modifie directement la feuille Excel.
 #' @export
-write_data_to_sheet <- function(sheet, data, start_row, start_col) {
+write_data_to_sheet <- function(
+    sheet,
+    data,
+    start_row,
+    start_col,
+    colnames = TRUE
+) {
 
-  # Écriture des noms de colonnes
-  header_row <- sheet$getRow(as.integer(start_row - 1))
-  if (is.null(header_row)) {
-    header_row <- sheet$createRow(as.integer(start_row - 1))
-  }
+  # Écriture éventuelle des noms de colonnes
+  if (colnames) {
 
-  for (j in seq_len(ncol(data))) {
-    col_index <- as.integer(start_col + j - 2)
+    header_row <- sheet$getRow(as.integer(start_row - 1))
 
-    cell <- header_row$getCell(col_index)
-    if (is.null(cell)) {
-      cell <- header_row$createCell(col_index)
+    if (is.null(header_row)) {
+      header_row <- sheet$createRow(as.integer(start_row - 1))
     }
 
-    cell$setCellValue(colnames(data)[j])
+    for (j in seq_len(ncol(data))) {
+
+      col_index <- as.integer(start_col + j - 2)
+
+      cell <- header_row$getCell(col_index)
+
+      if (is.null(cell)) {
+        cell <- header_row$createCell(col_index)
+      }
+
+      cell$setCellValue(base::colnames(data)[j])
+    }
   }
 
   # Écriture des données
   for (i in seq_len(nrow(data))) {
 
-    row_index <- as.integer(start_row + i - 1)
+    row_index <- as.integer(
+      start_row + i - 2 + as.integer(colnames)
+    )
 
     row <- sheet$getRow(row_index)
+
     if (is.null(row)) {
       row <- sheet$createRow(row_index)
     }
@@ -44,6 +60,7 @@ write_data_to_sheet <- function(sheet, data, start_row, start_col) {
       col_index <- as.integer(start_col + j - 2)
 
       cell <- row$getCell(col_index)
+
       if (is.null(cell)) {
         cell <- row$createCell(col_index)
       }
@@ -58,4 +75,5 @@ write_data_to_sheet <- function(sheet, data, start_row, start_col) {
     }
   }
 
+  invisible(NULL)
 }

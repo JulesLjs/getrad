@@ -4,16 +4,18 @@
 \alias{write_data_to_sheet}
 \title{Écrire une dataframe dans une feuille Excel cellule par cellule}
 \usage{
-write_data_to_sheet(sheet, data, start_row, start_col)
+write_data_to_sheet(sheet, data, start_row, start_col, colnames = TRUE)
 }
 \arguments{
-\item{sheet}{feuille Excel (objet sheet Apache POI)}
+\item{sheet}{Feuille Excel (objet sheet Apache POI).}
 
-\item{data}{dataframe à écrire}
+\item{data}{Dataframe à écrire.}
 
-\item{start_row}{ligne de départ}
+\item{start_row}{Ligne de départ.}
 
-\item{start_col}{colonne de départ}
+\item{start_col}{Colonne de départ.}
+
+\item{colnames}{Booléen indiquant si les noms de colonnes doivent être écrits.}
 }
 \value{
 Rien. La fonction modifie directement la feuille Excel.

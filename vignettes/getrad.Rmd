@@ -46,13 +46,13 @@ On définit une date de référence. Elle sera utilisée pour produire un libell
 date_revu <- as.Date("2026-06-01")
 ```
 
-On définit ensuite un dossier de sortie temporaire. Cela permet à la vignette de générer des fichiers sans écrire directement dans le dossier du package.
+On définit ensuite le dossier dans lequel les fichiers seront créés.
 
 ```{r}
-dossier_sortie <- tempdir()
+dossier_sortie <- getwd()
 ```
 
-Dans un usage réel, ce dossier temporaire pourrait être remplacé par le dossier de sortie de l'IR.
+Dans un usage réel, ce dossier pourrait être remplacé par le dossier de sortie de l'IR.
 
 ```{r, eval = FALSE}
 dossier_sortie <- file.path(dossier_ir_actuel, "data")
@@ -227,7 +227,14 @@ names(sheets)
 
 La fonction `write_data_to_sheet()` permet d'écrire un data frame dans une feuille Excel, à partir d'une ligne et d'une colonne données.
 
-On commence par écrire les trois premiers tableaux.
+L'argument `colnames` permet de choisir si les noms de colonnes doivent être écrits :
+
+- `colnames = TRUE` écrit les noms de colonnes à partir de `start_row`, puis les données sur les lignes suivantes ;
+- `colnames = FALSE` écrit directement les données à partir de `start_row`.
+
+Par défaut, `colnames` vaut `TRUE`.
+
+On commence par écrire les trois premiers tableaux avec les noms de colonnes.
 
 ```{r}
 write_data_to_sheet(
@@ -289,6 +296,8 @@ set_cell_value(
 
 On écrit ensuite les deux derniers tableaux dans les feuilles correspondantes.
 
+Pour la figure 7, les noms de colonnes sont déjà présents dans le modèle Excel. L'argument `colnames = FALSE` permet donc d'écrire directement les données à partir de `start_row`.
+
 ```{r}
 write_data_to_sheet(
   sheet = sheets[[4]],
@@ -310,7 +319,10 @@ write_data_to_sheet(
 Une fois le classeur modifié, on l'enregistre au format `.xlsx`.
 
 ```{r}
-fichier_xlsx_sortie <- file.path(dossier_sortie, "data_xlsx.xlsx")
+fichier_xlsx_sortie <- file.path(
+  dossier_sortie,
+  "data_xlsx.xlsx"
+)
 
 xlsx::saveWorkbook(
   wb_figure_fr,
@@ -336,7 +348,10 @@ convert_xlsx_to_ods(
 On vérifie que le fichier ODS a bien été créé.
 
 ```{r}
-fichier_ods_sortie <- file.path(dossier_sortie, "data_ods.ods")
+fichier_ods_sortie <- file.path(
+  dossier_sortie,
+  "data_ods.ods"
+)
 
 file.exists(fichier_ods_sortie)
 ```
@@ -355,6 +370,6 @@ list.files(
 
 ## Résumé
 
-Cette vignette montre comment partir d'un modèle Excel fourni avec le package `getrad`, écrire plusieurs tableaux dans ses feuilles, modifier une cellule spécifique, puis générer des sorties aux formats XLSX et ODS.
+Cette vignette montre comment partir d'un modèle Excel fourni avec le package `getrad`, écrire plusieurs tableaux dans ses feuilles avec ou sans noms de colonnes, modifier une cellule spécifique, puis générer des sorties aux formats XLSX et ODS.
 
 Le modèle initial reste toujours un fichier `.xlsx`. Le fichier `.ods` est ensuite produit par conversion du fichier `.xlsx` généré.
