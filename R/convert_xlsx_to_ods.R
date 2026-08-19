@@ -73,7 +73,7 @@ convert_xlsx_to_ods <- function(path_input,
   }
 
   if (!file.exists(input_file)) {
-    stop("Fichier d'entrée introuvable : ", input_file, call. = FALSE)
+    stop("Fichier d'entr\u00E9e introuvable : ", input_file, call. = FALSE)
   }
 
   if (!dir.exists(output_dir)) {
@@ -94,7 +94,7 @@ convert_xlsx_to_ods <- function(path_input,
   }
 
   if (!file.exists(generated_file)) {
-    stop("Le fichier .ods n'a pas été généré.", call. = FALSE)
+    stop("Le fichier .ods n'a pas \u00E9t\u00E9 g\u00E9n\u00E9r\u00E9.", call. = FALSE)
   }
 
   if (normalizePath(generated_file, winslash = "\\", mustWork = FALSE) !=

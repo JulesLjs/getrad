@@ -196,11 +196,7 @@ inst/example/tableaux_creations_entreprises_fr.xlsx
 Une fois le package installé, on y accède avec `system.file()`.
 
 ```{r}
-modele_xlsx <- system.file(
-  "example",
-  "tableaux_creations_entreprises_fr.xlsx",
-  package = "getrad"
-)
+modele_xlsx <- "tableaux_creations_entreprises_fr.xlsx"
 
 modele_xlsx
 ```
@@ -330,10 +326,10 @@ Le fichier `.ods` est produit à partir du fichier `.xlsx` généré précédemm
 
 ```{r}
 convert_xlsx_to_ods(
-  dossier_entree = dossier_sortie,
-  nom_fichier_entree = "data_xlsx",
-  dossier_sortie = dossier_sortie,
-  nom_fichier_sortie = "data_ods"
+  path_input = dossier_sortie,
+  file_input = "data_xlsx",
+  path_output = dossier_sortie,
+  file_output = "data_ods"
 )
 ```
 
