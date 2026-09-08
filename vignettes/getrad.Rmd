@@ -257,6 +257,20 @@ write_data_to_sheet(
   start_row = 3,
   start_col = 2
 )
+
+write_data_to_sheet(
+  sheet = sheets[[4]],
+  data = data_fig_7,
+  start_row = 3,
+  start_col = 3
+)
+
+write_data_to_sheet(
+  sheet = sheets[[5]],
+  data = data_fig_8,
+  start_row = 4,
+  start_col = 3
+)
 ```
 
 ## Personnalisation d'une cellule
@@ -292,28 +306,6 @@ set_cell_value(
 )
 ```
 
-## Écriture des dernières feuilles
-
-On écrit ensuite les deux derniers tableaux dans les feuilles correspondantes.
-
-Pour la figure 7, les noms de colonnes sont déjà présents dans le modèle Excel. L'argument `colnames = FALSE` permet donc d'écrire directement les données à partir de `start_row`.
-
-```{r}
-write_data_to_sheet(
-  sheet = sheets[[4]],
-  data = data_fig_7,
-  start_row = 3,
-  start_col = 3
-)
-
-write_data_to_sheet(
-  sheet = sheets[[5]],
-  data = data_fig_8,
-  start_row = 4,
-  start_col = 3
-)
-```
-
 ## Sauvegarde au format XLSX
 
 Une fois le classeur modifié, on l'enregistre au format `.xlsx`.
@@ -342,29 +334,6 @@ convert_xlsx_to_ods(
   file_input = "data_xlsx",
   path_output = dossier_sortie,
   file_output = "data_ods"
-)
-```
-
-On vérifie que le fichier ODS a bien été créé.
-
-```{r}
-fichier_ods_sortie <- file.path(
-  dossier_sortie,
-  "data_ods.ods"
-)
-
-file.exists(fichier_ods_sortie)
-```
-
-## Vérification des fichiers générés
-
-On peut enfin lister les fichiers créés dans le dossier de sortie.
-
-```{r}
-list.files(
-  dossier_sortie,
-  pattern = "data_",
-  full.names = TRUE
 )
 ```
 
