@@ -167,7 +167,7 @@ libelle_cumul <- if (mois == 1) {
 }
 
 set_cell_value(
-  sheet = sheets[[2]], row = 2, col = 3,
+  sheet = sheets[[2]], row = 3, col = 4,
   value = libelle_cumul
 )
 ```
