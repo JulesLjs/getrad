@@ -7,16 +7,16 @@
 set_cell_value(sheet, row_idx, col_idx, value)
 }
 \arguments{
-\item{sheet}{feuille Excel (objet sheet)}
+\item{sheet}{Feuille Excel (objet Apache POI)}
 
-\item{row_idx}{index de la ligne}
+\item{row_idx}{Numéro de ligne}
 
-\item{col_idx}{index de la colonne}
+\item{col_idx}{Numéro de colonne}
 
-\item{value}{valeur à écrire}
+\item{value}{Valeur à écrire}
 }
 \value{
-Rien. La cellule est modifiée dans la feuille.
+NULL, invisiblement. La cellule est modifiée dans la feuille.
 }
 \description{
 Fonction utilitaire pour écrire une valeur dans une cellule

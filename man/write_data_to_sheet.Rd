@@ -2,25 +2,25 @@
 % Please edit documentation in R/write_data_to_sheet.R
 \name{write_data_to_sheet}
 \alias{write_data_to_sheet}
-\title{Écrire une dataframe dans une feuille Excel cellule par cellule}
+\title{Écrire un data frame dans une feuille Excel cellule par cellule}
 \usage{
 write_data_to_sheet(sheet, data, start_row, start_col, colnames = TRUE)
 }
 \arguments{
-\item{sheet}{Feuille Excel (objet sheet Apache POI).}
+\item{sheet}{Feuille Excel (objet Apache POI).}
 
-\item{data}{Dataframe à écrire.}
+\item{data}{Data frame à écrire.}
 
-\item{start_row}{Ligne de départ.}
+\item{start_row}{Ligne de départ, à partir de 1.}
 
-\item{start_col}{Colonne de départ.}
+\item{start_col}{Colonne de départ, à partir de 1.}
 
 \item{colnames}{Booléen indiquant si les noms de colonnes doivent être écrits.}
 }
 \value{
-Rien. La fonction modifie directement la feuille Excel.
+NULL, invisiblement. La fonction modifie directement la feuille Excel.
 }
 \description{
-Fonction utilitaire pour écrire une dataframe dans une feuille Excel
-via l'API Java Apache POI (via le package xlsx).
+Les valeurs manquantes et les chaînes vides donnent des cellules vides
+dans les en-têtes et les données.
 }
